@@ -1,0 +1,108 @@
+### Health check
+GET http://localhost:3000/health
+
+### List accounts (default to first company if companyId not provided)
+GET http://localhost:3000/api/accounts
+
+### List accounts for specific company
+GET http://localhost:3000/api/accounts?companyId=default-company-id
+
+### Create account (without companyId - uses default)
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "1010",
+  "name": "Petty Cash",
+  "type": "ASSET"
+}
+
+### Create account (with companyId)
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "companyId": "default-company-id",
+  "code": "2100",
+  "name": "Short-term Loans",
+  "type": "LIABILITY"
+}
+
+### Create account - INCOME type
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "4100",
+  "name": "Service Revenue",
+  "type": "INCOME"
+}
+
+### Create account - EXPENSE type
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "5100",
+  "name": "Rent Expense",
+  "type": "EXPENSE"
+}
+
+### Create account - EQUITY type
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "3000",
+  "name": "Owner's Equity",
+  "type": "EQUITY"
+}
+
+### Test validation - missing code
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "name": "Test Account",
+  "type": "ASSET"
+}
+
+### Test validation - code too long
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "123456789012345678901",
+  "name": "Test Account",
+  "type": "ASSET"
+}
+
+### Test validation - name too long
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "9999",
+  "name": "A very long account name that exceeds the maximum limit of 120 characters and should trigger a validation error",
+  "type": "ASSET"
+}
+
+### Test validation - invalid type
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "9999",
+  "name": "Invalid Type Account",
+  "type": "INVALID_TYPE"
+}
+
+### Test unique constraint - duplicate code
+POST http://localhost:3000/api/accounts
+Content-Type: application/json
+
+{
+  "code": "1000",
+  "name": "Duplicate Code Test",
+  "type": "ASSET"
+}

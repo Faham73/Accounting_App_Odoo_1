@@ -1,0 +1,205 @@
+### Create journal entry (DRAFT) - with companyId
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "companyId": "default-company-id",
+  "journalCode": "GEN",
+  "date": "2024-01-15",
+  "memo": "Monthly rent payment",
+  "lines": [
+    { "accountCode": "5100", "label": "Rent Expense", "debit": 1200.00, "credit": 0 },
+    { "accountCode": "1010", "label": "Petty Cash", "debit": 0, "credit": 1200.00 }
+  ]
+}
+
+### Create journal entry (DRAFT) - without companyId (uses default)
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-01-20",
+  "memo": "Service revenue",
+  "lines": [
+    { "accountCode": "1010", "label": "Petty Cash", "debit": 500.00, "credit": 0 },
+    { "accountCode": "4100", "label": "Service Revenue", "debit": 0, "credit": 500.00 }
+  ]
+}
+
+### Create journal entry - SALES journal
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "SAL",
+  "date": "2024-01-25",
+  "memo": "Sales transaction",
+  "lines": [
+    { "accountCode": "1010", "debit": 1000.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 1000.00 }
+  ]
+}
+
+### Create journal entry - PURCHASE journal
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "PUR",
+  "date": "2024-02-01",
+  "memo": "Purchase of supplies",
+  "lines": [
+    { "accountCode": "5100", "label": "Supplies Expense", "debit": 250.00, "credit": 0 },
+    { "accountCode": "1010", "debit": 0, "credit": 250.00 }
+  ]
+}
+
+### Create journal entry - BANK journal
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "BNK",
+  "date": "2024-02-05",
+  "memo": "Bank deposit",
+  "lines": [
+    { "accountCode": "1010", "label": "Bank Account", "debit": 2000.00, "credit": 0 },
+    { "accountCode": "3000", "label": "Owner's Equity", "debit": 0, "credit": 2000.00 }
+  ]
+}
+
+### Create journal entry - unbalanced (allowed for DRAFT)
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-02-10",
+  "memo": "Draft entry - incomplete",
+  "lines": [
+    { "accountCode": "5100", "debit": 1000.00, "credit": 0 },
+    { "accountCode": "1010", "debit": 0, "credit": 500.00 }
+  ]
+}
+
+### Create journal entry - multiple lines
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-02-15",
+  "memo": "Complex transaction",
+  "lines": [
+    { "accountCode": "1010", "label": "Cash", "debit": 1500.00, "credit": 0 },
+    { "accountCode": "5100", "label": "Rent", "debit": 0, "credit": 800.00 },
+    { "accountCode": "5100", "label": "Utilities", "debit": 0, "credit": 200.00 },
+    { "accountCode": "3000", "label": "Equity", "debit": 0, "credit": 500.00 }
+  ]
+}
+
+### Get journal entry by ID
+GET http://localhost:3000/api/journal-entries/entry-id-here
+
+### Test validation - missing journalCode
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "date": "2024-01-15",
+  "lines": [
+    { "accountCode": "1010", "debit": 100.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}
+
+### Test validation - invalid date format
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "01-15-2024",
+  "lines": [
+    { "accountCode": "1010", "debit": 100.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}
+
+### Test validation - less than 2 lines
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-01-15",
+  "lines": [
+    { "accountCode": "1010", "debit": 100.00, "credit": 0 }
+  ]
+}
+
+### Test validation - negative debit
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-01-15",
+  "lines": [
+    { "accountCode": "1010", "debit": -100.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}
+
+### Test validation - both debit and credit > 0
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-01-15",
+  "lines": [
+    { "accountCode": "1010", "debit": 100.00, "credit": 50.00 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}
+
+### Test validation - missing accountCode
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-01-15",
+  "lines": [
+    { "debit": 100.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}
+
+### Test validation - journal not found
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "INVALID",
+  "date": "2024-01-15",
+  "lines": [
+    { "accountCode": "1010", "debit": 100.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}
+
+### Test validation - account not found
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2024-01-15",
+  "lines": [
+    { "accountCode": "9999", "debit": 100.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 100.00 }
+  ]
+}

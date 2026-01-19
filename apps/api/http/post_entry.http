@@ -1,0 +1,136 @@
+### Post journal entry - Success
+# First create a DRAFT entry, then post it
+# Step 1: Create a balanced DRAFT entry
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2026-01-15",
+  "memo": "Monthly rent payment",
+  "lines": [
+    { "accountCode": "5100", "label": "Rent Expense", "debit": 1200.00, "credit": 0 },
+    { "accountCode": "1010", "label": "Petty Cash", "debit": 0, "credit": 1200.00 }
+  ]
+}
+
+### Step 2: Post the entry (use the id from the response above)
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Post journal entry - Another example with different year
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2027-03-20",
+  "memo": "Service revenue",
+  "lines": [
+    { "accountCode": "1010", "label": "Petty Cash", "debit": 500.00, "credit": 0 },
+    { "accountCode": "4100", "label": "Service Revenue", "debit": 0, "credit": 500.00 }
+  ]
+}
+
+### Post the entry (use id from above response)
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Post journal entry - Multiple lines (balanced)
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2026-02-15",
+  "memo": "Complex transaction",
+  "lines": [
+    { "accountCode": "1010", "label": "Cash", "debit": 1500.00, "credit": 0 },
+    { "accountCode": "5100", "label": "Rent", "debit": 0, "credit": 800.00 },
+    { "accountCode": "5100", "label": "Utilities", "debit": 0, "credit": 200.00 },
+    { "accountCode": "3000", "label": "Equity", "debit": 0, "credit": 500.00 }
+  ]
+}
+
+### Post the multi-line entry
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Test error - Unbalanced entry (Debit != Credit)
+# Step 1: Create an unbalanced DRAFT entry
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2026-01-20",
+  "memo": "Unbalanced entry - should fail on post",
+  "lines": [
+    { "accountCode": "5100", "debit": 1000.00, "credit": 0 },
+    { "accountCode": "1010", "debit": 0, "credit": 500.00 }
+  ]
+}
+
+### Step 2: Try to post the unbalanced entry (should return 400)
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Test error - Already posted entry
+# Step 1: Create and post an entry
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2026-01-25",
+  "memo": "First post",
+  "lines": [
+    { "accountCode": "1010", "debit": 300.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 300.00 }
+  ]
+}
+
+### Step 2: Post it once (should succeed)
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Step 3: Try to post again (should return 409)
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Test error - Missing lines (< 2 lines)
+# Step 1: Create entry with only 1 line (allowed in DRAFT)
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "GEN",
+  "date": "2026-01-30",
+  "memo": "Incomplete entry",
+  "lines": [
+    { "accountCode": "1010", "debit": 100.00, "credit": 0 }
+  ]
+}
+
+### Step 2: Try to post entry with < 2 lines (should return 400)
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Test error - Entry not found
+POST http://localhost:3000/api/journal-entries/non-existent-id/post
+
+### Test error - Missing id parameter
+POST http://localhost:3000/api/journal-entries//post
+
+### Post with SALES journal (different journal code)
+POST http://localhost:3000/api/journal-entries
+Content-Type: application/json
+
+{
+  "journalCode": "SAL",
+  "date": "2026-04-10",
+  "memo": "Sales transaction",
+  "lines": [
+    { "accountCode": "1010", "debit": 1000.00, "credit": 0 },
+    { "accountCode": "4100", "debit": 0, "credit": 1000.00 }
+  ]
+}
+
+### Post the SALES journal entry
+POST http://localhost:3000/api/journal-entries/{{entry_id}}/post
+
+### Verify posted entry - Get entry by ID to see status and number
+GET http://localhost:3000/api/journal-entries/{{entry_id}}
