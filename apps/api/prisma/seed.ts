@@ -71,6 +71,34 @@ async function main() {
     console.log(`✅ Created account: ${created.name} (${created.code}) - ${created.type}`);
   }
 
+  // Create default Partners
+  const partners = [
+    { name: 'Walk-in Customer', isCustomer: true, isVendor: false },
+    { name: 'Default Vendor', isCustomer: false, isVendor: true },
+  ];
+
+  for (const partner of partners) {
+    const existing = await prisma.partner.findFirst({
+      where: {
+        companyId: company.id,
+        name: partner.name,
+      },
+    });
+
+    if (!existing) {
+      const created = await prisma.partner.create({
+        data: {
+          companyId: company.id,
+          ...partner,
+        },
+      });
+      const typeLabel = `${created.isCustomer ? 'Customer' : ''}${created.isCustomer && created.isVendor ? '/' : ''}${created.isVendor ? 'Vendor' : ''}`;
+      console.log(`✅ Created partner: ${created.name} (${typeLabel})`);
+    } else {
+      console.log(`⏭️  Partner already exists: ${partner.name}`);
+    }
+  }
+
   console.log('✨ Seeding completed!');
 }
 

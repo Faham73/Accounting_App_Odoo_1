@@ -1,0 +1,262 @@
+### List customer invoices (default to first company if companyId not provided)
+GET http://localhost:3000/api/customer-invoices
+
+### List customer invoices for specific company
+GET http://localhost:3000/api/customer-invoices?companyId=default-company-id
+
+### Get customer invoice by ID
+GET http://localhost:3000/api/customer-invoices/{{invoiceId}}
+
+### Create customer invoice - Single line (default company)
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "memo": "Monthly service invoice",
+  "lines": [
+    {
+      "description": "Professional Services - January 2024",
+      "quantity": 10,
+      "unitPrice": 150.00,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Create customer invoice - Multiple lines with due date
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "companyId": "default-company-id",
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-20",
+  "dueDate": "2024-02-20",
+  "memo": "Multi-line invoice for services and products",
+  "lines": [
+    {
+      "description": "Consulting Services - Q1 2024",
+      "quantity": 20,
+      "unitPrice": 200.00,
+      "incomeAccountCode": "4000"
+    },
+    {
+      "description": "Software License - Annual",
+      "quantity": 1,
+      "unitPrice": 5000.00,
+      "incomeAccountCode": "4000"
+    },
+    {
+      "description": "Training Services",
+      "quantity": 8,
+      "unitPrice": 175.00,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Create customer invoice - Minimal (no memo, no dueDate)
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-25",
+  "lines": [
+    {
+      "description": "Product Sale",
+      "quantity": 5,
+      "unitPrice": 99.99,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Create customer invoice - Fractional quantity
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-30",
+  "lines": [
+    {
+      "description": "Hourly Consulting (25.5 hours)",
+      "quantity": 25.5,
+      "unitPrice": 150.00,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - missing partnerId
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": 100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - invalid invoiceDate format
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "01/15/2024",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": 100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - invalid dueDate format
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "dueDate": "01/30/2024",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": 100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - empty lines array
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "lines": []
+}
+
+### Test validation - missing lines
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15"
+}
+
+### Test validation - missing description in line
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "quantity": 1,
+      "unitPrice": 100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - invalid quantity (negative)
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": -1,
+      "unitPrice": 100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - invalid unitPrice (negative)
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": -100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}
+
+### Test validation - missing incomeAccountCode
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": 100
+    }
+  ]
+}
+
+### Test validation - invalid account code
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "{{partnerId}}",
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": 100,
+      "incomeAccountCode": "9999"
+    }
+  ]
+}
+
+### Test validation - partner not found
+POST http://localhost:3000/api/customer-invoices
+Content-Type: application/json
+
+{
+  "partnerId": "non-existent-partner-id",
+  "invoiceDate": "2024-01-15",
+  "lines": [
+    {
+      "description": "Test",
+      "quantity": 1,
+      "unitPrice": 100,
+      "incomeAccountCode": "4000"
+    }
+  ]
+}

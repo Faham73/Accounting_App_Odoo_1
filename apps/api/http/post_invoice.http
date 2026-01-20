@@ -1,0 +1,38 @@
+### Post customer invoice (draft invoice)
+POST http://localhost:3000/api/customer-invoices/{{invoiceId}}/post
+
+### Post customer invoice - Success example
+### First, create an invoice, then use its ID
+POST http://localhost:3000/api/customer-invoices/{{invoiceId}}/post
+
+###
+### Expected response:
+### {
+###   "data": {
+###     "id": "...",
+###     "number": "INV/2024/0001",
+###     "status": "POSTED",
+###     "postedAt": "...",
+###     "journalEntryId": "...",
+###     ...
+###   },
+###   "journalEntry": {
+###     "id": "...",
+###     "number": null
+###   }
+### }
+
+### Test - Post non-existent invoice
+POST http://localhost:3000/api/customer-invoices/non-existent-id/post
+
+### Test - Post already posted invoice
+### This will fail if invoice is already POSTED
+POST http://localhost:3000/api/customer-invoices/{{postedInvoiceId}}/post
+
+### Test - Post invoice with no lines
+### This should fail validation
+POST http://localhost:3000/api/customer-invoices/{{emptyInvoiceId}}/post
+
+### Test - Post invoice with zero total
+### This should fail validation
+POST http://localhost:3000/api/customer-invoices/{{zeroTotalInvoiceId}}/post

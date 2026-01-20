@@ -125,7 +125,7 @@ th {
 
 .line-row {
   display: grid;
-  grid-template-columns: 150px 1fr 150px 150px;
+  grid-template-columns: 1fr 120px 120px 150px auto;
   gap: 10px;
   margin-bottom: 10px;
   align-items: end;

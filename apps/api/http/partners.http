@@ -1,0 +1,116 @@
+### List partners (default to first company if companyId not provided)
+GET http://localhost:3000/api/partners
+
+### List partners for specific company
+GET http://localhost:3000/api/partners?companyId=default-company-id
+
+### Create partner - Customer only (default)
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Acme Corporation",
+  "email": "contact@acme.com",
+  "phone": "+1-555-0123"
+}
+
+### Create partner - Customer only (explicit)
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "companyId": "default-company-id",
+  "name": "Tech Solutions Inc",
+  "email": "info@techsolutions.com",
+  "isCustomer": true,
+  "isVendor": false
+}
+
+### Create partner - Vendor only
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Supply Chain Co",
+  "email": "orders@supplychain.com",
+  "phone": "+1-555-0456",
+  "isCustomer": false,
+  "isVendor": true
+}
+
+### Create partner - Both customer and vendor
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Business Partner LLC",
+  "email": "contact@businesspartner.com",
+  "isCustomer": true,
+  "isVendor": true
+}
+
+### Create partner - Minimal (name only, defaults to customer)
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Walk-in Customer"
+}
+
+### Create partner - Without email
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Cash Customer",
+  "phone": "+1-555-0789",
+  "isCustomer": true
+}
+
+### Test validation - missing name
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "isCustomer": true
+}
+
+### Test validation - empty name
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "   ",
+  "isCustomer": true
+}
+
+### Test validation - invalid email format
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Test Partner",
+  "email": "not-an-email",
+  "isCustomer": true
+}
+
+### Test validation - both isCustomer and isVendor false
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Invalid Partner",
+  "isCustomer": false,
+  "isVendor": false
+}
+
+### Test unique constraint - duplicate email (same company)
+POST http://localhost:3000/api/partners
+Content-Type: application/json
+
+{
+  "name": "Duplicate Email Test",
+  "email": "contact@acme.com",
+  "isCustomer": true
+}
